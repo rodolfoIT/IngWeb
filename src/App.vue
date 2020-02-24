@@ -22,13 +22,63 @@
 			</div>
 			<div class="row" v-for="a in estaciones" v-bind:key="a.Index">
 				<div class="col">{{a.Index}}</div>
-				<div class="col">{{a.Id}}</div>
-				<div class="col">{{a.Estanque}}</div>
-				<div class="col">{{a.Posicion}}</div>
-				<div class="col">{{a.Status}} </div>
-        <div class="col"><button class="btn btn-info" v-on:click="eliminarEstacion">Editar</button>
-        <button class="btn btn-danger" v-on:click="eliminarEstacion">Eliminar</button></div> 
+      
+        <div class="col"> 
+          <span v-if="formActualizar && indexActualizar == a.Index">
+          <input v-model="idActualizar" type="text" class="form-control">
+          </span>
+          <span v-else>
+            {{a.Id}}
+          </span>
+        </div>
+
+        <div class="col"> 
+          <span v-if="formActualizar && indexActualizar == a.Index">
+            <input v-model="estanqueActualizar" type="text" class="form-control">
+          </span>
+          <span v-else>
+            {{a.Estanque}}
+          </span>
+        </div>
+
+        <div class="col">
+          <span v-if="formActualizar && indexActualizar == a.Index">
+            <input v-model="posicionActualizar" type="text" class="form-control">
+          </span>
+          <span v-else>
+            {{a.Posicion}}
+          </span>
+        </div>
+        
+        <div class="col"> 
+          <span v-if="formActualizar && indexActualizar == a.Index">
+            <input v-model="statusActualizar" type="text" class="form-control">
+          </span>
+          <span v-else>
+            {{a.Status}}
+          </span>
+        </div>
+
+        <div class="col">
+          <span v-if="formActualizar && indexActualizar == a.Index">
+          <button @click="guardarEdit(a.Index)" class="btn btn-success">Guardar</button>
+          </span>
+          <span v-else>
+            <button  v-on:click="editarEstacion(a.Index)"  class="btn btn-info">Editar</button>
+              <button class="btn btn-danger" v-on:click="eliminarEstacion">Eliminar</button>
+          </span>
+        </div> 
+        
+ 
 			</div>
+
+      
+
+
+
+
+
+
     </div>
   </div>
 </template>
@@ -51,7 +101,14 @@
         nuevoId:'',
         nuevoEstanque:'',
         nuevoPosicion:'',
-        nuevoStatus:''
+        nuevoStatus:'',
+        formActualizar: false,
+        indexActualizar:0,
+        idActualizar:'',
+        estanqueActualizar:'',
+        posicionActualizar:'',
+        statusActualizar:''
+
       }
     },
     methods:{
@@ -80,13 +137,26 @@
         var indice=this.estaciones.indexOf(estacion);
         this.estaciones.splice(indice,1)
         this.guardar();
-      },    
-      editarEstacion(estacion){
-        console.log("boton presionado", estacion);
-        var indice=this.estaciones.indexOf(estacion);
-        this.estaciones.splice(indice,1)
-        this.guardar();
       },
+      editarEstacion(index) {
+        console.log(index);
+        this.indexActualizar=index;
+        this.idActualizar = this.estaciones[index-1].Id;
+        this.estanqueActualizar = this.estaciones[index-1].Estanque;
+        this.posicionActualizar = this.estaciones[index-1].Posicion;
+        this.statusActualizar = this.estaciones[index-1].Status;
+        this.formActualizar = true;
+        this.guardar();
+      },   
+      guardarEdit(index) {
+        console.log(index);
+        this.formActualizar = false;
+        this.estaciones[index-1].Id = this.idActualizar;
+        this.estaciones[index-1].Estanque = this.estanqueActualizar;
+        this.estaciones[index-1].Posicion = this.posicionActualizar;
+        this.estaciones[index-1].Status = this.statusActualizar;
+        this.guardar();
+      }, 
       guardar(){
         localStorage.setItem("estaciones",JSON.stringify(this.estaciones));
       }
